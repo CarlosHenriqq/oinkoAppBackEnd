@@ -8,12 +8,12 @@ router.use((req, res, next) => {
   if (!req.usuario_id) return res.status(401).json({ erro: 'Usuário não autenticado' });
   next();
 });
-
+ 
 // Retorna valor total gasto pelo usuário
 router.get('/total', async (req, res) => {
   const db = req.app.locals.db;
   const usuario_id = req.usuario_id;
-
+console.log('Usuário requisitando total:', usuario_id);
   try {
     const [{ total = 0 }] = await db('gastosMensais')
       .where({ usuario_id })

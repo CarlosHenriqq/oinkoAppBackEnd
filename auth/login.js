@@ -4,11 +4,19 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
+
 router.post('/', async (req, res) => {
+    console.log('REQUISIÇÃO CHEGOU NO LOGIN');
+
+
     const db = req.app.locals.db;
     const { email, senha } = req.body;
+    console.log('EMAIL:', email);
+console.log('SENHA:', senha);
+
     try {
         const usuario = await db('usuarios').where({ email }).first();
+        console.log('USUÁRIO NO BANCO:', usuario);
         if (!usuario) {
             return res.status(401).json({ erro: 'Usuário não encontrado' });
         }
