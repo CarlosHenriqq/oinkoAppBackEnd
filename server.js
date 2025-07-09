@@ -33,7 +33,7 @@ app.use('/auth/registerFinance', registerFinance)
 app.use('/categoriasFinanceiras', categoriesRoute);
 app.use('/auth/login', loginRoute);
 app.use('/auth/register', registerRoute);
-app.use('/gastos', gastosRoutes);
+app.use('/expenses/gastos', gastosRoutes);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Oinko API rodando na porta ${PORT}`));
