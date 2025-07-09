@@ -24,11 +24,12 @@ app.locals.db = db;
 // Importa rotas de auth
 const loginRoute = require('./auth/login');
 const registerRoute = require('./auth/register');
+const registerFinance = require('./auth/registerFinance')
 const gastosRoutes = require('./expenses/gastos');
 const categoriesRoute = require('./categories/categorias');
 
 
-
+app.use('/auth/registerFinance', registerFinance)
 app.use('/categoriasFinanceiras', categoriesRoute);
 app.use('/auth/login', loginRoute);
 app.use('/auth/register', registerRoute);
