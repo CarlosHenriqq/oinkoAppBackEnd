@@ -4,16 +4,16 @@ const router = express.Router();
 // Middleware para pegar db e autenticar usuário (você pode criar um middleware para auth depois)
 router.use((req, res, next) => {
   // Exemplo: usuario_id no header só pra testar (depois usa JWT)
-  req.usuario_id = req.headers['usuario_id']; 
+  req.usuario_id = req.headers['usuario_id'];
   if (!req.usuario_id) return res.status(401).json({ erro: 'Usuário não autenticado' });
   next();
 });
- 
+
 // Retorna valor total gasto pelo usuário
 router.get('/total', async (req, res) => {
   const db = req.app.locals.db;
   const usuario_id = req.usuario_id;
-console.log('Usuário requisitando total:', usuario_id);
+  console.log('Usuário requisitando total:', usuario_id);
   try {
     const [{ total = 0 }] = await db('gastosMensais')
       .where({ usuario_id })
@@ -26,11 +26,37 @@ console.log('Usuário requisitando total:', usuario_id);
   }
 });
 
+router.get('/totalPCategoria', async (req, res) => {
+    const db = req.app.locals.db;
+    const usuario_id = req.headers['usuario_id'];
+
+    try {
+        const resultados = await db('gastosMensais as g')
+    .join('categoriasFinanceiras as c', 'g.categoria_id', 'c.id')
+    .join('categoriasFinanceirasUsuario as cf', function() {
+        this.on('cf.categoria_id', '=', 'c.id')
+            .andOn('cf.usuario_id', '=', 'g.usuario_id');
+    })
+    .where('g.usuario_id', usuario_id)
+    .groupBy('c.nome')
+    .havingRaw('SUM(g.valor) > 0')
+    .select('c.nome')
+    .sum('g.valor as total');
+
+
+        res.json(resultados);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ erro: 'Erro ao buscar gastos por categoria' });
+    }
+});
+
+
 // Adiciona um novo gasto
 router.post('/', async (req, res) => {
   const db = req.app.locals.db;
   const usuario_id = req.usuario_id;
-  const { nome, valor, categoria_id, data, descricao } = req.body;
+  const { valor, categoria_id, data, descricao } = req.body;
 
   try {
     const [id] = await db('gastosMensais').insert({

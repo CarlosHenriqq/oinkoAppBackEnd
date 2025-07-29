@@ -34,7 +34,8 @@ console.log('SENHA:', senha);
             usuario: {
                 id: usuario.id,
                 nome: usuario.nome,
-                email: usuario.email
+                email: usuario.email,
+                renda: usuario.renda
             }
         });
     } catch (err) {

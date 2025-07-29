@@ -2,14 +2,14 @@
 const knex = require('knex')({
   client: 'sqlite3',
   connection: {
-    filename: '/oinkoDb' // ajuste o caminho para o seu banco
+    filename: '../oinko.db' // ajuste o caminho para o seu banco
   },
   useNullAsDefault: true
 });
 
 async function limparUsuarios() {
   try {
-    const deleted = await knex('usuarios').del();
+    const deleted = await knex('usuarios').del(15);
     console.log(`Foram deletados ${deleted} usuários.`);
     process.exit(0);
   } catch (error) {

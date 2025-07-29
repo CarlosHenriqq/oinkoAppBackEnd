@@ -1,23 +1,27 @@
 // Extrato detalhado dos gastos do usuário (pode filtrar por mês se quiser)
+
+const express = require('express');
+const router = express.Router();
+
 router.get('/extrato', async (req, res) => {
   const db = req.app.locals.db;
-  const usuario_id = req.usuario_id;
+  const usuario_id = req.headers.usuario_id;
   
   // Opcional: pegar mês e ano via query params para filtrar (ex: ?ano=2025&mes=7)
   const { ano, mes } = req.query;
-
+  console.log('Recebendo', ano, mes)
   try {
     let query = db('gastosMensais as g')
       .join('categoriasFinanceiras as c', 'g.categoria_id', 'c.id')
       .where('g.usuario_id', usuario_id)
       .select(
         'g.id',
-        'g.nome',
         'g.valor',
         'g.data',
         'g.descricao',
         'c.nome as categoria_nome',
-        'c.cor as categoria_cor'
+        'c.id as id_cat'
+        
       )
       .orderBy('g.data', 'desc');
 
@@ -39,3 +43,5 @@ router.get('/extrato', async (req, res) => {
     res.status(500).json({ erro: 'Erro ao buscar extrato de gastos' });
   }
 });
+
+module.exports = router;
